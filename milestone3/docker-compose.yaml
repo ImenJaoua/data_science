@@ -1,0 +1,33 @@
+# docker-compose.yml
+# docker-compose.yml
+version: '3'
+
+services:
+  serving:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile.serving
+      
+    image: ift6758/serving:1.0.0
+    ports:
+     - 5000:5000   
+    volumes:
+      - ./models:/code/models
+    environment:
+      - FLASK_LOG=${FLASK_LOG}
+      - MODELS_DIR=${MODELS_DIR}
+      - COMET_WORKSPACE=${WORKSPACE}
+      - COMET_API_KEY=${COMET_API_KEY}
+      - DEFAULT_MODEL=${DEFAULT_MODEL}
+      - DEFAULT_VERSION=${DEFAULT_VERSION}
+  streamlit:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile.streamlit
+    image: ift6758/streamlit:1.0.0
+    ports:
+      - 8501:8501
+    volumes:
+      - ./:/code
+    depends_on:
+      - serving
